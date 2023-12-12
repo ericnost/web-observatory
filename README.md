@@ -1,6 +1,8 @@
 # observatory
 Python package for collecting and analyzing webpages
 
+See [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
+
 ## Modules
 ### `start_project`
 Initializes a project directory
