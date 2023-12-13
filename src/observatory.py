@@ -24,7 +24,6 @@ def start_project(project):
   print("Done!")
 
 # Global imports
-import caffeine # Always caffeinate! This is a hidden requirement - never gets installed
 import pandas
 
 # Twitter search
