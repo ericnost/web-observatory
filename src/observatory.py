@@ -543,7 +543,13 @@ def scrape(urls):
   from scrapy.utils.log import configure_logging 
   from scrapy.crawler import CrawlerProcess #Runner
 
-  from items import DigconscrapeItem # Modularization: change "digcon" throughout to "observatory" or let users name a project
+  import importlib.util
+  import sys
+  spec = importlib.util.spec_from_file_location("module.items", "digcon_scraper/digcon_scraper/items.py") # TBD: generalize this
+  items = importlib.util.module_from_spec(spec)
+  sys.modules["module.items"] = items
+  spec.loader.exec_module(items)
+  #from items import DigconscrapeItem # Modularization: change "digcon" throughout to "observatory" or let users name a project
 
   import re # for processing text
 
@@ -585,7 +591,7 @@ def scrape(urls):
         yield scrapy.Request(url = each['scrape_url'], meta = each, callback = self.parse_result)
           
     def parse_result(self, response):
-      item = DigconscrapeItem()
+      item = items.DigconscrapeItem()
       item['url'] = response.url
       
       try:
