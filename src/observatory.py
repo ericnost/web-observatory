@@ -557,7 +557,10 @@ def scrape(urls):
 
   conn = None 
   conn = psycopg2.connect("dbname="+credentials["postgres"]["db"]+" user="+credentials["postgres"]["user"]+" password="+credentials["postgres"]["password"]+" host=localhost port=5432")
+  conn.autocommit = True
+
   cur = conn.cursor()
+  cur.execute("""CREATE TABLE IF NOT EXISTS public.site_text (url varchar,  body_text varchar, date varchar, source varchar(10), domain varchar);""")
 
   def DBinsert(url, contents, date, source, domain, count):
     print("inserting: " + str(count), end='\r')
