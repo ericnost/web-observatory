@@ -7,12 +7,6 @@ See [here](https://github.com/ericnost/digital_conservation) for extended exampl
 ### `start_project`
 Initializes a project directory
 
-### `search_twitter`
-Searches Twitter for tweets matching parameters including terms. By default, returns a pandas DataFrame of urls mentioned in tweets and timestamps of tweets. Twitter search credentials required.
-
-### `twitter_process`
-Compiles two or more CSVs of results from searching Twitter.
-
 ### `search_google`
 Searches Google for terms. Google Custom Search Engine credentials required.
 
@@ -20,7 +14,7 @@ Searches Google for terms. Google Custom Search Engine credentials required.
 Compiles results from multiple Google searches.
 
 ### `get_domains`
-Extracts domain-level information from the urls returned by Google and/or Twitter searches (e.g. 'google' in www.google.com)
+Extracts domain-level information from the urls returned by Google searches (e.g. 'google' in www.google.com)
 
 ### `initialize_crawl`
 Initializes a Scrapy crawl on a set of domains. Returns a JSON file of urls found through the crawl.
@@ -33,10 +27,11 @@ Not implemented yet.
 `!scrapy crawl digcon_crawler -O output.json --nolog
 
 ### `search_merge`
-Merges Google / Twitter searches and crawl results.
+Merges Google searches and crawl results.
 
 ### `get_versions`
-Gets historical versions of Twitter-searched urls using the Internet Archive's Wayback Machine. Attempts to find the version of the page archived closest in time to when it was tweeted.
+~Gets historical versions of Twitter-searched urls using the Internet Archive's Wayback Machine. Attempts to find the version of the page archived closest in time to when it was tweeted.~ \
+Uses the `requests` package to ping the url and get the "full" address rather than a redirect (e.g. bit.ly/12312). This helps in scraping.
 
 ### `initialize_scrape`
 Initializes files to scrape urls for their HTML.
@@ -49,9 +44,6 @@ A set of methods for searching the Postgreql database of site text, including fi
 
 ### `ground_truth`
 Produces a sample of pages for verifying counts of terms.
-
-### `analyze_twitter`
-Calculates and visualizes averages and frequencies per year for each search term in the site text (Twitter-found sites only, since those are the only ones with timestamps)
 
 ### `analyze_orgs`
 Calculates and visualizes averages and frequencies for each search term in the site text and summarizes by organization (domain).
