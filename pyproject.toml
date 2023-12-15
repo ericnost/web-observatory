@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "observatory"
-version = "1.1.0"
+version = "1.2.0"
 authors = [
   { name="Eric Nost", email="enost@uoguelph.ca" },
 ]
@@ -24,7 +24,7 @@ dependencies = [
 	"Requests==2.31.0",
 	"Scrapy==2.6.1",
 	"tldextract==3.2.0",
-	"wayback==0.3.2"
+	"wayback>=0.3.2"
 ]
 
 [project.urls]
