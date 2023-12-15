@@ -785,69 +785,12 @@ def ground_truth(pages, fraction, num_terms = None, which_terms = None):
 """ ## Analyze Term Search Results
 
 
-*  analyze_twitter: Calculate and visualize averages and frequencies per year for each term (Twitter only)
 *  analyze_orgs: calulate and visualize averages and frequencies for each term (Orgs only)
 *  analzye_term_correlations: Calculate and visualize co-variance metrics (e.g. AI / digital conservation)
 *  co_occurrence: find specific pages with co-occurrence of terms
 
 
 """
-
-def analyze_twitter(counts, terms = None):
-  # Analyze and visualize twitter data over time
-  # Returns the input average, frequency, and yearly totals
-  
-  import pandas
-
-  # Load data
-  if type(counts) == str:
-    counts = pandas.read_csv(counts) # Load data or use counts generated from scraping above...
-  else:
-    counts = counts
-
-  # Process
-  counts = counts.loc[counts['source'] == "Twitter"] # Filter counts to just Twitter sources
-  counts['date'].update(counts['date'].str.slice(0,4)) # Get the year
-  counts['date'].update(pandas.to_datetime(counts["date"], format="%Y").dt.to_period("Y")) # Convert specific year/weeks to years #counts['date'].dt.to_timestamp('Y').dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ") #
-  total = counts.groupby(by='date').agg({"url": "nunique"}) # Count the total number of pages we're examining. This should be the same for every term.
-  total_sum = total["url"].sum() # The grand total of all Twitter pages over all years
-
-  # Group results by year
-  ## Create grouping dictionary
-  agg = dict((t,"sum") for t in terms)
-  agg["url"] = "nunique"
-  terms_by_year = counts.groupby(by = 'date').agg(agg)
-
-  # Calculate
-  ## Average = sum of that term in a given year divided by the total number of URLs for that year, then multiplied by 100. This yields the average use of the term per 100 pages.
-  ## Is the term used a lot or a little?
-  ## How much the term is used (but not necessarily its distribution - could be used lots on one page)
-  def calc_average(row):
-    for t in terms:
-      row[t] = int((row[t] / row["url"]) * 100) # e.g. 200 uses, 1000 pages = .2 / page. Or, 20 uses per 100 pages
-    return row
-  avg = terms_by_year.copy().apply(lambda row: calc_average(row), axis=1)
-
-  ## Frequency = number of links that mention the term divided by the total number of links that year (x 100) to yield the frequency of that term.
-  ## Because we are doing frequency out of 100, this is a percent.
-  ## A measure of how widely the term is used (its distribution) - on what percent of pages is it mentioned at least once?
-  freq = pandas.DataFrame(index=list(terms_by_year.index))
-  for t in terms: # For each term in our list of terms
-    g = counts[['date','url', t]] # Subset the data to just the counts of this term and links
-    ## Mentioned
-    m = g.loc[g[t]>0] # Create another subset focusing on just the pages where the term was mentioned at least once
-    m = m.groupby(by='date').agg({"url": "nunique"}) # Count the number of pages (links) the term was mentioned at least once
-    ## Total
-    final = (m/total) * 100 # Calculate the percent of total pages that the term was mentioned at least once on.
-    final = final.rename({"url": t}, axis='columns')
-    freq = freq.join(final) # e.g. 200 pages mentioning the term out of 1000, or 20 percent
-
-  # Visualize trends over time - average (term used a lot/little) vs frequency (widely used / used on one page)
-  for t in terms: # For each term in our list of terms
-    x = avg[[t]].join(freq[[t]], lsuffix='_avg', rsuffix='_freq') # Create a new table with the averages and frequencies for just this term
-    display(x.plot()) # Show the plot
-  
-  return avg, freq, total
 
 # Calculate average and frequency per organization
 def analyze_orgs(counts, orgs = None, terms = None):
