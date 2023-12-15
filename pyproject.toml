@@ -28,6 +28,7 @@ dependencies = [
 	"pyopenssl==22.0.0",
 	"cryptography<38",
 	"Twisted==22.10.0"
+]
 
 [project.urls]
 Homepage = "https://github.com/ericnost/observatory"
