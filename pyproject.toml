@@ -24,7 +24,7 @@ dependencies = [
 	"Requests==2.31.0",
 	"Scrapy==2.6.1",
 	"tldextract==3.2.0",
-	"wayback==0.3.2"
+	"wayback>=0.3.2"
 ]
 
 [project.urls]

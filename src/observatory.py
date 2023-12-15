@@ -353,7 +353,7 @@ def get_versions(pages, project = None):
   import requests
   import fnmatch
   from urllib.parse import urljoin, urlparse
-  from wayback import WaybackClient  #This is a hidden requirement - never gets installed
+  from wayback import WaybackClient
 
   # Set up
   pages["full_url"] = None # The actual url and not some bit.ly url 
