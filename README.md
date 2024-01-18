@@ -1,7 +1,7 @@
 # observatory
 Python package for collecting and analyzing webpages
 
-See [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
+A tutorial is available [here](https://colab.research.google.com/drive/1vd6Nm77cDFMpKt5vyDmmZtSfy3bL-HGg). See the Jupyter Notebooks [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
 
 ## Modules
 ### `start_project`
