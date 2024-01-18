@@ -3,7 +3,7 @@ requires = ["flit_core>=3.4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "observatory"
+name = "web-observatory"
 version = "1.2.1"
 authors = [
   { name="Eric Nost", email="enost@uoguelph.ca" },
