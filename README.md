@@ -1,7 +1,7 @@
-# observatory
+# web-observatory
 Python package for collecting and analyzing webpages
 
-See [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
+See [here](https://github.com/ericnost/digital_conservation) for extended examples of `web-observatory` in use.
 
 ## Modules
 ### `start_project`
@@ -55,6 +55,4 @@ Calculates and visualizes co-variance metrics for specified search terms in the 
 Returns specific pages using two or more specified search terms.
 
 ## TBD
-- Documentation :(
-- Convert modules to methods of data classes
-- Add crawl module
+- See: [web-observatory project](https://github.com/users/ericnost/projects/3/views/1)
