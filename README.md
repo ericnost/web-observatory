@@ -1,4 +1,5 @@
 # observatory
+[![Download Latest Version from PyPI](https://img.shields.io/pypi/v/web-observatory.svg)](https://pypi.python.org/pypi/web-observatory)
 Python package for collecting and analyzing webpages
 
 See [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
