@@ -1,10 +1,17 @@
-# observatory
+# web-observatory
 [![Download Latest Version from PyPI](https://img.shields.io/pypi/v/web-observatory.svg)](https://pypi.python.org/pypi/web-observatory)
 Python package for collecting and analyzing webpages
 
-See [here](https://github.com/ericnost/digital_conservation) for extended examples of `observatory` in use.
+.. image:: https://img.shields.io/pypi/v/web-observatory.svg
+        :target: https://pypi.python.org/pypi/web-observatory
+        :alt: Download Latest Version from PyPI
 
-## Modules
+*web-observatory* is a Python package for collecting and analyzing webpages.
+
+See [here](https://github.com/ericnost/digital_conservation) for extended examples of `web-observatory` in use.
+
+Modules
+--------------------------
 ### `start_project`
 Initializes a project directory
 
@@ -24,8 +31,7 @@ Initializes a Scrapy crawl on a set of domains. Returns a JSON file of urls foun
 Processes the JSON output of a crawl into a pandas DataFrame.
 
 ### `crawl`
-Not implemented yet. 
-`!scrapy crawl digcon_crawler -O output.json --nolog
+Not implemented as a module yet, but it can be run through a command like `!scrapy crawl digcon_crawler -O output.json --nolog`
 
 ### `search_merge`
 Merges Google searches and crawl results.
@@ -55,7 +61,6 @@ Calculates and visualizes co-variance metrics for specified search terms in the 
 ### `co_occurrence`
 Returns specific pages using two or more specified search terms.
 
-## TBD
-- Documentation :(
-- Convert modules to methods of data classes
-- Add crawl module
+Issues and Development
+--------------------------
+See: [web-observatory project](https://github.com/users/ericnost/projects/3/views/1)
