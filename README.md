@@ -1,10 +1,5 @@
 # web-observatory
 [![Download Latest Version from PyPI](https://img.shields.io/pypi/v/web-observatory.svg)](https://pypi.python.org/pypi/web-observatory)
-Python package for collecting and analyzing webpages
-
-.. image:: https://img.shields.io/pypi/v/web-observatory.svg
-        :target: https://pypi.python.org/pypi/web-observatory
-        :alt: Download Latest Version from PyPI
 
 *web-observatory* is a Python package for collecting and analyzing webpages.
 
