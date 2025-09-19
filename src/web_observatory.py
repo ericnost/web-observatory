@@ -556,7 +556,7 @@ def scrape(urls):
   import psycopg2
 
   conn = None 
-  conn = psycopg2.connect("dbname="+credentials["postgres"]["db"]+" user="+credentials["postgres"]["user"]+" password="+credentials["postgres"]["password"]+" host=localhost port=5432")
+  conn = psycopg2.connect("dbname="+credentials['postgres']['db']+" user="+credentials['postgres']['user']+" password="+credentials['postgres']['password']+" host=localhost port=5432")
   conn.autocommit = True
 
   cur = conn.cursor()
@@ -634,7 +634,7 @@ def query(qtype, terms = None, project = None):
   # Connect to db
   import psycopg2
   conn = None 
-  conn = psycopg2.connect("dbname="+credentials["postgres"]["db"]+" user="+credentials["postgres"]["user"]+" password="+credentials["postgres"]["password"]+" host=localhost port=5432")
+  conn = psycopg2.connect("dbname="+credentials['postgres']['db']+" user="+credentials['postgres']['user']+" password="+credentials['postgres']['password']+" host=localhost port=5432")
   cur = conn.cursor()
 
   if qtype == "copy":
