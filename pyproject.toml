@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "web-observatory"
-version = "1.2.1"
+version = "1.2.2"
 authors = [
   { name="Eric Nost", email="enost@uoguelph.ca" },
 ]
