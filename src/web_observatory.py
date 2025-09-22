@@ -795,7 +795,9 @@ def ground_truth(pages, fraction, num_terms = None, which_terms = None):
 
 
 *  analyze_orgs: calulate and visualize averages and frequencies for each term (Orgs only)
+*. analyze_currentuse: calculate average use and frequency of each term for non-Twitter pages
 *  analzye_term_correlations: Calculate and visualize co-variance metrics (e.g. AI / digital conservation)
+*  analyze_association: associations per terms as measured by % of shared pages
 *  co_occurrence: find specific pages with co-occurrence of terms
 
 
@@ -803,7 +805,7 @@ def ground_truth(pages, fraction, num_terms = None, which_terms = None):
 
 # Calculate average and frequency per organization
 def analyze_orgs(counts, orgs = None, terms = None):
-  # Calculate average use and frequency of each term for each org
+  # Calculate average use, frequency, and total use of each term for each org
   
   import pandas
 
@@ -814,11 +816,12 @@ def analyze_orgs(counts, orgs = None, terms = None):
     counts = counts
 
   # Filter to orgs
-  counts = counts.loc[(counts["source"] == "Crawl") & (counts["domain"].isin(orgs))]
+  counts = counts.loc[(counts["source"]=="Crawl") & (counts["domain"].isin(orgs))]
 
   # Prep results
-  avg = pandas.DataFrame(index = orgs, columns = [t+"_avg" for t in terms])
-  freq = pandas.DataFrame(index = orgs, columns = [t+"_freq" for t in terms])
+  avg = pandas.DataFrame(index = orgs, columns = [t for t in terms])
+  freq = pandas.DataFrame(index = orgs, columns = [t for t in terms])
+  total = pandas.DataFrame(index = orgs, columns = [t for t in terms])
 
   for org in orgs:
     df = counts.loc[counts["domain"] == org] # Filter
@@ -828,19 +831,55 @@ def analyze_orgs(counts, orgs = None, terms = None):
     for t in terms:
       ## Average
       average = round((df[t].sum() / df[t].count()) * 100, 2)
-      avg.loc[avg.index == org, t+"_avg"] = average
+      avg.loc[avg.index == org, t] = average
+      #avg.rename(columns={t+"_avg": t.title()}, inplace=True) # Format
       ## Mentioned
       g = df[['url', t]] # Subset the data to just the counts of this term and links
       m = g.loc[g[t]>0] # Create another subset focusing on just the pages where the term was mentioned at least once
       m = m[t].count() # Count the number of pages (links) the term was mentioned at least once
-      ## Total
+      ## Frequency
       f = round(( m / df[t].count() ) * 100, 2)
-      freq.loc[freq.index == org, t+"_freq"] = f
+      freq.loc[freq.index == org, t] = f
+      #freq.rename(columns={t+"_freq": t.title()}, inplace=True) # Format
+      ## Totals
+      ttl = df[t].sum()
+      total.loc[total.index == org, t] = ttl
 
-  return avg, freq
+  return avg, freq, total
+
+# Calculate current average and frequency
+def analyze_currentuse(counts, terms = None):
+  # Calculate average use and frequency of each term for pages
+  
+  import pandas
+
+  # Load data
+  if type(counts) == str:
+    counts = pandas.read_csv(counts) # Load data or use counts generated from scraping above...
+  else:
+    counts = counts
+
+  # Filter
+  counts = counts.loc[((counts["source"] == "Twitter") & (counts["date"].str.contains("2022"))) | (counts["source"] == "Crawl") | (counts["source"] == "Google")]
+
+  # Prep results
+  results = pandas.DataFrame(index = terms, columns = ["Average", "Frequency"])
+
+  for t in terms:
+    ## Average
+    average = round((counts[t].sum() / counts[t].count()) * 100, 2)
+    results.loc[results.index == t, "Average"] = average
+    ## Mentioned
+    m = counts.loc[counts[t]>0] # Create a subset focusing on just the pages where the term was mentioned at least once
+    m = m[t].count() # Count the number of pages (links) the term was mentioned at least once
+    ## Total
+    f = round(( m / counts.shape[0] ) * 100, 2)
+    results.loc[results.index == t, "Frequency"] = f
+
+  return results
 
 # Calculate co-variance and visualize scatter plots
-def analyze_term_correlations(counts, terms = None):
+def analyze_term_correlations(counts, terms = None, other_terms = None, visualize = False):
   import pandas
   # Load data
   if type(counts) == str:
@@ -852,11 +891,13 @@ def analyze_term_correlations(counts, terms = None):
   total_sum = counts['url'].nunique() # Count the total number of pages we're examining.
   #print(total_sum) # Debugging
 
+  corrs = pandas.DataFrame(index = [t for t in terms], columns = [ot for ot in other_terms])
+
   # Set up terms
   for t in terms: # For each term in our list of terms. Or, pick a specific term by doing for t in terms[terms.index("YOUR TERM")]
     # make sure the term has actually been counted here?
     t_count = counts[[t]] # The counts of this term
-    for ot in terms: # For each of the other terms in our list
+    for ot in other_terms: # For each of the other terms in our list
       if t != ot: # Don't count the term against itself
         ot_count = counts[[ot]] # The counts of this other term
         #display(ot_count, t_count) # Debugging
@@ -870,19 +911,48 @@ def analyze_term_correlations(counts, terms = None):
         thatzero = joined.loc[(joined[c[0]] > 0) & (joined[c[1]] == 0)] # Share of other term 0s, this term at least once. No "Conservation" but at least one "Machine Learning".  Gives us a sense of whether the terms are being discussed together.
         together = joined.loc[(joined[c[0]] > 0) & (joined[c[1]] > 0)] # Share of >1, >1. "Machine Learning" and "Conservation" used together
         
-        print(t, ot) # Could save instead of printing this information....
-        print("Zeros: {}, {}%".format( zerozeros.shape[0], int((zerozeros.shape[0] / total_sum) * 100))) # Percent and count of all pages these terms never appear on together
-        print("{} but not {}: {}, {}%".format(ot, t, thiszero.shape[0], int((thiszero.shape[0] / total_sum) * 100))) # Percent and count of pages where the other term appears, but not this term
-        print("{} but not {}: {}, {}%".format(t, ot, thatzero.shape[0], int((thatzero.shape[0] / total_sum) * 100))) # Percent and count of pages where this term appears, but not the other one
-        print("Together: {}, {}%".format( together.shape[0], int((together.shape[0] / total_sum) * 100))) # Percent and countof pages these terms appear on together
-        print("\n")
+        #print(t, ot) # Could save instead of printing this information....
+        #print("Zeros: {}, {}%".format( zerozeros.shape[0], int((zerozeros.shape[0] / total_sum) * 100))) # Percent and count of all pages these terms never appear on together
+        #print("{} but not {}: {}, {}%".format(ot, t, thiszero.shape[0], int((thiszero.shape[0] / total_sum) * 100))) # Percent and count of pages where the other term appears, but not this term
+        #print("{} but not {}: {}, {}%".format(t, ot, thatzero.shape[0], int((thatzero.shape[0] / total_sum) * 100))) # Percent and count of pages where this term appears, but not the other one
+        #print("Together: {}, {}%".format( together.shape[0], int((together.shape[0] / total_sum) * 100))) # Percent and countof pages these terms appear on together
+        #print("\n")
         
         # Calculate basic correlation. Assumption - when mentioned together, terms should be more or less equally mentioned, increasing or decreasing together linearally. Otherwise, we're just talking about, for instance, "Machine Learning" but not in the context of "Conservation" or vice versa.
         correlation = together[[c[0], c[1]]].corr() # https://towardsdatascience.com/statistics-in-python-understanding-variance-covariance-and-correlation-4729b528db01
-        display(correlation)
-        
+        corrs.at[t, ot] = correlation[t][1]
+
         # Visualize
-        display(together.plot.scatter(x = c[0], y = c[1])) # Show scatter plot. Replace joined with thiszero to show no "this term" but at least one "other term". Replace with together to show pages where both used.
+        if visualize:
+          #display(correlation)
+          display(together.plot.scatter(x = c[0], y = c[1], xlabel = t.title(), ylabel= ot.title())) # Show scatter plot. Replace joined with thiszero to show no "this term" but at least one "other term". Replace with together to show pages where both used.
+
+  return corrs
+
+# Associations per terms as measured by % of shared pages
+def analyze_association(counts, terms=None, other_terms=None):
+  import pandas
+  # Load data
+  if type(counts) == str:
+    counts = pandas.read_csv(counts) # Load data
+  else:
+    counts = counts
+    
+  assoc = pandas.DataFrame(index = [t for t in terms], columns = [ot for ot in other_terms])
+
+  # Set up terms
+  for t in terms: # For each term in our list of terms. Or, pick a specific term by doing for t in terms[terms.index("YOUR TERM")]
+    # make sure the term has actually been counted here?
+    t_count = counts.loc[counts[t]>0] # The pages where this term is actually mentioned
+    for ot in other_terms: # For each of the other terms in our list
+      if t != ot: # Don't count the term against itself
+        ot_count = t_count.loc[t_count[ot]>0] # The pages where the term is mentioned and the other term is too
+        try:
+          assoc.at[t, ot] = round((ot_count.shape[0]/t_count.shape[0]) * 100, 2)
+        except ZeroDivisionError:
+          assoc.at[t, ot] = None
+
+  return assoc
 
 # Where are organizations talking about terms together? Once we know that, we can code for *how* they talk about terms in specific depth        
 def co_occurrence(words, terms, orgs = False):
