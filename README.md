@@ -50,8 +50,14 @@ Produces a sample of pages for verifying counts of terms.
 ### `analyze_orgs`
 Calculates and visualizes averages and frequencies for each search term in the site text and summarizes by organization (domain).
 
+### `analyze_currentuse`
+Calculate current average and frequency - useful when dealing with historical page versions
+
 ### `analzye_term_correlations`
 Calculates and visualizes co-variance metrics for specified search terms in the site text. 
+
+### `analyze_association`
+Associations per terms as measured by % of shared pages
 
 ### `co_occurrence`
 Returns specific pages using two or more specified search terms.
